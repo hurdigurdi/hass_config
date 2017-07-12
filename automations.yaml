@@ -1,0 +1,95 @@
+- id: sunset
+  alias: Sunset Report
+  trigger:
+    platform: sun
+    event: sunset
+    offset: -01:30
+  action:
+    - service: notify.telegram_notify
+      data_template:
+        title: Temperature Summary
+        message: "Summary for Sunset: \nBedroom, {{ states.sensor.temperature_bedroom.state }} C / {{ states.sensor.humidity_bedroom.state }} %\nLivingroom, {{ states.sensor.temperature_livingroom.state }} C / {{ states.sensor.humidity_livingroom.state }} %\nGuestroom, {{ states.sensor.temperature_guestroom.state }} C / {{ states.sensor.humidity_guestroom.state }} %"
+
+- id: temp
+  alias: Temperature Alert
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.temperature_bedroom
+    above: 23
+  action:
+    - service: notify.telegram_notify
+      data_template:
+        message: "Temperature above 23 in Bedroom: \nBedroom, {{ states.sensor.temperature_bedroom.state }} C / {{ states.sensor.humidity_bedroom.state }} %\nLivingroom, {{ states.sensor.temperature_livingroom.state }} C / {{ states.sensor.humidity_livingroom.state }} %\nGuestroom, {{ states.sensor.temperature_guestroom.state }} C / {{ states.sensor.humidity_guestroom.state }} %"
+
+- id: humidity_bedroom
+  alias: Humidity Bedroom Alert
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.humidity_bedroom
+    above: 65
+  action:
+    - service: notify.telegram_notify
+      data_template:
+        message: "Too much humidity in bedroom: \n{{ states.sensor.humidity_bedroom.state }} %"
+
+- id: webcamimagesmorning
+  alias: Daily Morning Webcam Images
+  trigger:
+     platform: time
+     after: '07:00:00'
+  action:
+    - service: telegram_bot.send_photo
+      data:
+         file: /tmp/lastsnap.jpg
+
+- id: webcamimagesevening
+  alias: Daily Evening Webcam Images
+  trigger:
+     platform: time
+     after: '19:00:00'
+  action:
+    - service: telegram_bot.send_photo
+      data:
+         file: /tmp/lastsnap.jpg
+
+
+- id: telegram
+  alias: 'Telegram bot that reply pong to ping'
+  hide_entity: true
+  trigger:
+    platform: event
+    event_type: telegram_command
+    event_data:
+      command: '/ping'
+  action:
+    - service: notify.telegram_notify
+      data:
+        message: 'pong'
+
+- id: telegramLightOff
+  alias: 'Switch off all Lights via Telegram'
+  hide_entity: true
+  trigger:
+    platform: event
+    event_type: telegram_command
+    event_data:
+      command: '/lightsoff'
+  action:
+    service: light.turn_off
+    entity_id: group.all_lights
+
+#automation movie:
+#  alias: Movie
+#  trigger:
+#    platform: state
+#    entity_id: media_player.amazon_fire_tv
+#    to: 'playing'
+#  condition:
+#    condition: state
+#    entity_id: sun.sun
+#    state: 'below_horizon'
+#  action:
+#    service: scene.turn_on
+#    entity_id: scene.movies
+
+

@@ -1,0 +1,182 @@
+homeassistant:
+  # Name of the location where Home Assistant is running
+  name: Home
+  whitelist_external_dirs:
+    - /tmp
+  # Location required to calculate the time the sun rises and sets
+  latitude: !secret my_latitude
+  longitude: !secret my_longitude
+  # Impacts weather/sunrise data
+  elevation: 101
+  # metric for Metric, imperial for Imperial
+  unit_system: metric
+  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  time_zone: Europe/Berlin
+
+# Show links to resources in log and frontend
+#introduction:
+
+# Enables the frontend
+frontend:
+
+http:
+  # Uncomment this to add a password (recommended!)
+   api_password: !secret http_password
+   #ssl_certificate: /home/hass/.homeassistant/fullchain.pem
+   #ssl_key: /home/hass/.homeassistant//privkey.pem
+
+# Checks for available updates
+updater:
+
+# Discover some devices automatically
+discovery:
+
+# Allows you to issue voice commands from the frontend in enabled browsers
+conversation:
+
+# Enables support for tracking state changes over time.
+history:
+
+# View all events in a logbook
+logbook:
+
+# Track the sun
+sun:
+
+# Weather Prediction
+sensor:
+  platform: yr
+  monitored_conditions:
+    - temperature
+    - precipitation
+    - symbol
+    - pressure
+    - humidity
+
+mqtt:
+  broker: 192.168.0.228
+  port: 1883
+  client_id: home-assistant-1
+  keepalive: 60
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  protocol: 3.1
+
+device_tracker:
+  platform: owntracks
+  max_gps_accuracy: 300
+
+# define Temperature Sensor
+sensor temp_bedroom:
+  platform: mqtt
+  name: "Temperature Bedroom"
+  state_topic: "sensor/bedroom/temperature"
+  qos: 0
+  unit_of_measurement: "ºC"
+
+sensor hum_bedroom:
+  platform: mqtt
+  name: "Humidity Bedroom"
+  state_topic: "sensor/bedroom/humidity"
+  qos: 0
+  unit_of_measurement: "%"
+
+sensor temp_livingroom:
+  platform: mqtt
+  name: "Temperature Livingroom"
+  state_topic: "sensor/livingroom/temperature"
+  qos: 0
+  unit_of_measurement: "ºC"
+
+sensor hum_livingroom:
+  platform: mqtt
+  name: "Humidity Livingroom"
+  state_topic: "sensor/livingroom/humidity"
+  qos: 0
+  unit_of_measurement: "%"
+
+sensor temp_guestroom:
+  platform: mqtt
+  name: "Temperature Guestroom"
+  state_topic: "sensor/guestroom/temperature"
+  qos: 0
+  unit_of_measurement: "ºC"
+
+sensor hum_guestroom:
+  platform: mqtt
+  name: "Humidity Guestroom"
+  state_topic: "sensor/guestroom/humidity"
+  qos: 0
+  unit_of_measurement: "%"
+
+# FireTV
+#media_player:
+#  platform: firetv
+#  host: localhost:5556
+
+# define groups
+group:
+  playroom:
+    name: Funroom
+    entities:
+      - light.hue_aura_1
+  bedroom:
+    name: Bedroom
+    entities:
+      - light.iris_white
+      - sensor.humidity_bedroom
+      - sensor.temperature_bedroom
+  livingroom:
+    name: Livingroom
+    entities:
+      - light.decke_ess
+      - light.iris_black
+      - light.saule_1
+      - light.saule_2
+      - sensor.humidity_livingroom
+      - sensor.temperature_livingroom
+  guestroom:
+    name: Guestroom
+    entities:
+      - sensor.humidity_guestroom
+      - sensor.temperature_guestroom
+
+telegram_bot:
+  platform: polling
+  api_key: !secret telegram_api_key
+  allowed_chat_ids:
+    - !secret telegram_chat_id
+
+# notification setup Telegram
+notify:
+  name: telegram_notify
+  platform: telegram
+  api_key: !secret telegram_api_key
+  chat_id: !secret telegram_chat_id
+
+automation: !include automations.yaml
+
+scene:
+  - name: Romantic
+    entities:
+      light.hue_aura_1:
+        state: on
+        transition: 5
+        rgb_color: [220, 100, 30]
+        brightness: 100
+      light.iris_white:
+        state: on
+        transition: 5
+        rgb_color: [220, 100, 30]
+        brightness: 100
+  - name: Movies
+    entities:
+      light.iris_white:
+        state: on
+        transition: 14
+        rgb_color: [128, 200, 230]
+        brightness: 100
+      light.hue_aura_1:
+        state: off
+        transition: 10
+
