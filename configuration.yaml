@@ -63,8 +63,10 @@ mqtt:
   protocol: 3.1
 
 device_tracker:
-  platform: owntracks
-  max_gps_accuracy: 300
+  - platform: icloud
+    username: !secret icloud_user1
+    password: !secret icloud_pass1
+    account_name: !secret icloud_account_name1
 
 # define Temperature Sensor
 sensor temp_bedroom:
