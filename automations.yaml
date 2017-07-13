@@ -78,6 +78,34 @@
     service: light.turn_off
     entity_id: group.all_lights
 
+- id: bedroomMotion
+  alias: 'Switch on Light if motion in bedroom'
+  trigger:
+    platform: state
+    entity_id: sensor.motion_bedroom
+    to: 'on'
+  condition:
+    condition: state
+    entity_id: sun.sun
+    state: 'below_horizon'
+  action:
+    - service: light.turn_on
+      data:
+        entity_id: group.bedroom
+        brightness: 50
+
+- id: bedroomMotionOff
+  alias: 'Turn off bedroom light delayed'
+  trigger:
+    platform: state
+    entity_id: sensor.motion_bedroom
+    to: 'off'
+    for:
+      minutes: 5
+  action:
+    service: light.turn_off
+    entity_id: group.bedroom
+
 #automation movie:
 #  alias: Movie
 #  trigger:

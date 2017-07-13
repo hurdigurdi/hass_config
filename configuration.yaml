@@ -67,6 +67,10 @@ device_tracker:
     username: !secret icloud_user1
     password: !secret icloud_pass1
     account_name: !secret icloud_account_name1
+  - platform: icloud
+    username: !secret icloud_user2
+    password: !secret icloud_pass2
+    account_name: !secret icloud_account_name2
 
 # define Temperature Sensor
 sensor temp_bedroom:
@@ -110,6 +114,12 @@ sensor hum_guestroom:
   state_topic: "sensor/guestroom/humidity"
   qos: 0
   unit_of_measurement: "%"
+
+sensor motion_bedroom:
+  platform: mqtt
+  name: "Motion Bedroom"
+  state_topic: "sensor/bedroom/motion"
+  device_class: motion
 
 # FireTV
 #media_player:
