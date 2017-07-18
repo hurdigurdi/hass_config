@@ -78,8 +78,42 @@
     service: light.turn_off
     entity_id: group.all_lights
 
+- id: telegramAlarmOn
+  alias: 'Alarms on via Telegram'
+  hide_entity: true
+  trigger:
+    platform: event
+    event_type: telegram_command
+    event_data:
+      command: '/alarmon'
+  action:
+    - service: automation.turn_on
+      entity_id: automation.main_door_alarm
+    - service: automation.turn_on
+      entity_id: automation.fun_door_alarm
+    - service: notify.telegram_notify
+      data:
+        message: 'Alarms enabled'
+
+- id: telegramAlarmOff
+  alias: 'Alarms off via Telegram'
+  hide_entity: true
+  trigger:
+    platform: event
+    event_type: telegram_command
+    event_data:
+      command: '/alarmoff'
+  action:
+    - service: automation.turn_off
+      entity_id: automation.main_door_alarm
+    - service: automation.turn_off
+      entity_id: automation.fun_door_alarm
+    - service: notify.telegram_notify
+      data:
+        message: 'Alarms disabled'
+
 - id: bedroomMotion
-  alias: 'Switch on Light if motion in bedroom'
+  alias: 'Motion in bedroom'
   trigger:
     platform: state
     entity_id: sensor.motion_bedroom
