@@ -106,9 +106,31 @@
     service: light.turn_off
     entity_id: group.bedroom
 
+- id: mainDoorAlarm
+  alias: 'Main Door Alarm'
+  trigger:
+    platform: state
+    entity_id: sensor.door_alarm
+    to: 'on'
+  action:
+    - service: notify.telegram_notify
+      data:
+        message: 'Main-Door was opened'
+
+- id: funDoorAlarm
+  alias: 'Fun Door Alarm'
+  trigger:
+    platform: state
+    entity_id: sensor.fun_door_alarm
+    to: 'on'
+  action:
+    - service: notify.telegram_notify
+      data:
+        message: 'Funroom-Door was opened'
+
 #automation movie:
 #  alias: Movie
-#  trigger:
+#  triggerMainMainMainMainMainMain      :
 #    platform: state
 #    entity_id: media_player.amazon_fire_tv
 #    to: 'playing'

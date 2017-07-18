@@ -121,6 +121,16 @@ sensor motion_bedroom:
   state_topic: "sensor/bedroom/motion"
   device_class: motion
 
+sensor alarm_hallway:
+  platform: mqtt
+  name: "Door Alarm"
+  state_topic: "sensor/hallway/door"
+
+sensor alarm_funroom:
+  platform: mqtt
+  name: "Fun Door Alarm"
+  state_topic: "sensor/funroom/door"
+
 # FireTV
 #media_player:
 #  platform: firetv
