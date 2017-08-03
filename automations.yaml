@@ -36,7 +36,7 @@
   alias: Daily Morning Webcam Images
   trigger:
      platform: time
-     after: '07:00:00'
+     at: '07:00:00'
   action:
     - service: telegram_bot.send_photo
       data:
@@ -46,7 +46,7 @@
   alias: Daily Evening Webcam Images
   trigger:
      platform: time
-     after: '19:00:00'
+     at: '19:00:00'
   action:
     - service: telegram_bot.send_photo
       data:
@@ -112,6 +112,33 @@
       data:
         message: 'Alarms disabled'
 
+- id: telegramWebcamRequest
+  alias: 'Request Webcam image via Telegram'
+  hide_entity: true
+  trigger:
+    platform: event
+    event_type: telegram_command
+    event_data:
+      command: '/webcam'
+  action:
+    - service: telegram_bot.send_photo
+      data:
+         file: /tmp/lastsnap.jpg
+
+- id: telegramTemperatureRequest
+  alias: 'Request Temperature Summary via Telegram'
+  hide_entity: true
+  trigger:
+    platform: event
+    event_type: telegram_command
+    event_data:
+      command: '/temperature'
+  action:
+    - service: notify.telegram_notify
+      data_template:
+        title: Temperature On Demand
+        message: "Summary for Sunset: \nBedroom, {{ states.sensor.temperature_bedroom.state }} C / {{ states.sensor.humidity_bedroom.state }} %\nLivingroom, {{ states.sensor.temperature_livingroom.state }} C / {{ states.sensor.humidity_livingroom.state }} %\nGuestroom, {{ states.sensor.temperature_guestroom.state }} C / {{ states.sensor.humidity_guestroom.state }} %"
+
 - id: bedroomMotion
   alias: 'Motion in bedroom'
   trigger:
@@ -161,6 +188,26 @@
     - service: notify.telegram_notify
       data:
         message: 'Funroom-Door was opened'
+
+- id: kitchenOn
+  alias: 'Kitchen Light On'
+  hide_entity: true
+  trigger:
+    platform: state
+    entity_id: input_boolean.kitchen_light
+    to: 'on'
+  action:
+    service: shell_command.kitchen_on
+
+- id: kitchenOff
+  alias: 'Kitchen Light Off'
+  hide_entity: true
+  trigger:
+    platform: state
+    entity_id: input_boolean.kitchen_light
+    to: 'off'
+  action:
+    service: shell_command.kitchen_off
 
 #automation movie:
 #  alias: Movie

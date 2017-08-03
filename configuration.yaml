@@ -72,6 +72,16 @@ device_tracker:
     password: !secret icloud_pass2
     account_name: !secret icloud_account_name2
 
+input_boolean:
+  kitchen_light:
+    name: Kitchen Light
+    initial: off
+    icon: mdi:lightbulb
+
+shell_command:
+  kitchen_on: !secret shell_command_kitchenlight_on
+  kitchen_off: !secret shell_command_kitchenlight_off
+
 # define Temperature Sensor
 sensor temp_bedroom:
   platform: mqtt
@@ -157,6 +167,10 @@ group:
       - light.saule_2
       - sensor.humidity_livingroom
       - sensor.temperature_livingroom
+  kitchen:
+    name: Kitchen
+    entities:
+      - input_boolean.kitchen_light
   guestroom:
     name: Guestroom
     entities:
