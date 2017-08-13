@@ -111,17 +111,31 @@ sensor hum_livingroom:
   qos: 0
   unit_of_measurement: "%"
 
-sensor temp_guestroom:
+#sensor temp_guestroom:
+#  platform: mqtt
+#  name: "Temperature Guestroom"
+#  state_topic: "sensor/guestroom/temperature"
+#  qos: 0
+#  unit_of_measurement: "ºC"
+
+#sensor hum_guestroom:
+#  platform: mqtt
+#  name: "Humidity Guestroom"
+#  state_topic: "sensor/guestroom/humidity"
+#  qos: 0
+#  unit_of_measurement: "%"
+
+sensor temp_funroom:
   platform: mqtt
-  name: "Temperature Guestroom"
-  state_topic: "sensor/guestroom/temperature"
+  name: "Temperature Funroom"
+  state_topic: "sensor/funroom/temperature"
   qos: 0
   unit_of_measurement: "ºC"
 
-sensor hum_guestroom:
+sensor hum_funroom:
   platform: mqtt
-  name: "Humidity Guestroom"
-  state_topic: "sensor/guestroom/humidity"
+  name: "Humidity Funroom"
+  state_topic: "sensor/funroom/humidity"
   qos: 0
   unit_of_measurement: "%"
 
@@ -148,10 +162,12 @@ sensor alarm_funroom:
 
 # define groups
 group:
-  playroom:
+  funroom:
     name: Funroom
     entities:
       - light.hue_aura_1
+      - sensor.humidity_funroom
+      - sensor.temperature_funroom
   bedroom:
     name: Bedroom
     entities:
@@ -171,11 +187,11 @@ group:
     name: Kitchen
     entities:
       - input_boolean.kitchen_light
-  guestroom:
-    name: Guestroom
-    entities:
-      - sensor.humidity_guestroom
-      - sensor.temperature_guestroom
+#  guestroom:
+#    name: Guestroom
+#    entities:
+#      - sensor.humidity_guestroom
+#      - sensor.temperature_guestroom
 
 telegram_bot:
   platform: polling

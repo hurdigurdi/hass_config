@@ -8,7 +8,7 @@
     - service: notify.telegram_notify
       data_template:
         title: Temperature Summary
-        message: "Summary for Sunset: \nBedroom, {{ states.sensor.temperature_bedroom.state }} C / {{ states.sensor.humidity_bedroom.state }} %\nLivingroom, {{ states.sensor.temperature_livingroom.state }} C / {{ states.sensor.humidity_livingroom.state }} %\nGuestroom, {{ states.sensor.temperature_guestroom.state }} C / {{ states.sensor.humidity_guestroom.state }} %"
+        message: "Summary for Sunset: \nBedroom, {{ states.sensor.temperature_bedroom.state }} C / {{ states.sensor.humidity_bedroom.state }} %\nLivingroom, {{ states.sensor.temperature_livingroom.state }} C / {{ states.sensor.humidity_livingroom.state }} %\nFunroom, {{ states.sensor.temperature_funroom.state }} C / {{ states.sensor.humidity_funroom.state }} %"
 
 - id: temp
   alias: Temperature Alert
@@ -20,6 +20,28 @@
     - service: notify.telegram_notify
       data_template:
         message: "Temperature above 23 in Bedroom: \nBedroom, {{ states.sensor.temperature_bedroom.state }} C / {{ states.sensor.humidity_bedroom.state }} %\nLivingroom, {{ states.sensor.temperature_livingroom.state }} C / {{ states.sensor.humidity_livingroom.state }} %\nGuestroom, {{ states.sensor.temperature_guestroom.state }} C / {{ states.sensor.humidity_guestroom.state }} %"
+
+- id: tempLowFun
+  alias: Temp too low in Funroom
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.temperature_funroom
+    below: 20
+  action:
+    - service: notify.telegram_notify
+      data_template:
+        message: "Temperature too low in FunRoom! \nCurrently: {{ states.sensor.temperature_funroom.state }} C / {{ states.sensor.humidity_funroom.state }} %"
+
+- id: tempHighFun
+  alias: Temp too high in Funroom
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.temperature_funroom
+    above: 32
+  action:
+    - service: notify.telegram_notify
+      data_template:
+        message: "Temperature too high in FunRoom! \nCurrently: {{ states.sensor.temperature_funroom.state }} C / {{ states.sensor.humidity_funroom.state }} %"
 
 - id: humidity_bedroom
   alias: Humidity Bedroom Alert
@@ -75,8 +97,9 @@
     event_data:
       command: '/lightsoff'
   action:
-    service: light.turn_off
-    entity_id: group.all_lights
+    - service: light.turn_off
+      entity_id: group.all_lights
+    - service: shell_command.kitchen_off
 
 - id: telegramAlarmOn
   alias: 'Alarms on via Telegram'
@@ -137,7 +160,7 @@
     - service: notify.telegram_notify
       data_template:
         title: Temperature On Demand
-        message: "Summary for Sunset: \nBedroom, {{ states.sensor.temperature_bedroom.state }} C / {{ states.sensor.humidity_bedroom.state }} %\nLivingroom, {{ states.sensor.temperature_livingroom.state }} C / {{ states.sensor.humidity_livingroom.state }} %\nGuestroom, {{ states.sensor.temperature_guestroom.state }} C / {{ states.sensor.humidity_guestroom.state }} %"
+        message: "Summary on Demand: \nBedroom, {{ states.sensor.temperature_bedroom.state }} C / {{ states.sensor.humidity_bedroom.state }} %\nLivingroom, {{ states.sensor.temperature_livingroom.state }} C / {{ states.sensor.humidity_livingroom.state }} %\nFunroom, {{ states.sensor.temperature_funroom.state }} C / {{ states.sensor.humidity_funroom.state }} %"
 
 - id: bedroomMotion
   alias: 'Motion in bedroom'
