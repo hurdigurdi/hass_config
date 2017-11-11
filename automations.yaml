@@ -8,7 +8,7 @@
     - service: notify.telegram_notify
       data_template:
         title: Temperature Summary
-        message: "Summary for Sunset: \nBedroom, {{ states.sensor.temperature_bedroom.state }} C / {{ states.sensor.humidity_bedroom.state }} %\nLivingroom, {{ states.sensor.temperature_livingroom.state }} C / {{ states.sensor.humidity_livingroom.state }} %\nFunroom, {{ states.sensor.temperature_funroom.state }} C / {{ states.sensor.humidity_funroom.state }} %"
+        message: "Summary for Sunset: \nBedroom, {{ states.sensor.temperature_bedroom.state }} C / {{ states.sensor.humidity_bedroom.state }} %\nLivingroom, {{ states.sensor.temperature_livingroom.state }} C / {{ states.sensor.humidity_livingroom.state }} %\nFunroom, {{ states.sensor.temperature_funroom.state }} C / {{ states.sensor.humidity_funroom.state }} %\nTerrarium, {{ states.sensor.temperature_terrarium.state }} C / {{ states.sensor.humidity_terrarium.state }} %"
 
 - id: temp
   alias: Temperature Alert
@@ -42,6 +42,28 @@
     - service: notify.telegram_notify
       data_template:
         message: "Temperature too high in FunRoom! \nCurrently: {{ states.sensor.temperature_funroom.state }} C / {{ states.sensor.humidity_funroom.state }} %"
+
+- id: humLowTerr
+  alias: Low Humidity in Terrarium
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.humidity_terrarium
+    below: !secret terr_humidity_limit
+  action:
+    - service: notify.telegram_notify
+      data_template:
+        message: "Humidity too low in Terrarium!\nCurrently: {{ states.sensor.humidity_terrarium.state }} %"
+
+- id: tempHighTerr
+  alias: High Temp in Terrarium
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.temperature_terrarium
+    above: !secret terr_temp_upper_limit
+  action:
+    - service: notify.telegram_notify
+      data_template:
+        message: "Temperature too high in Terrarium!\nCurrently: {{ states.sensor.temperature_terrarium.state }} %"
 
 - id: humidity_bedroom
   alias: Humidity Bedroom Alert
@@ -160,7 +182,7 @@
     - service: notify.telegram_notify
       data_template:
         title: Temperature On Demand
-        message: "Summary on Demand: \nBedroom, {{ states.sensor.temperature_bedroom.state }} C / {{ states.sensor.humidity_bedroom.state }} %\nLivingroom, {{ states.sensor.temperature_livingroom.state }} C / {{ states.sensor.humidity_livingroom.state }} %\nFunroom, {{ states.sensor.temperature_funroom.state }} C / {{ states.sensor.humidity_funroom.state }} %"
+        message: "Summary on Demand: \nBedroom, {{ states.sensor.temperature_bedroom.state }} C / {{ states.sensor.humidity_bedroom.state }} %\nLivingroom, {{ states.sensor.temperature_livingroom.state }} C / {{ states.sensor.humidity_livingroom.state }} %\nFunroom, {{ states.sensor.temperature_funroom.state }} C / {{ states.sensor.humidity_funroom.state }} %\nTerrarium, {{ states.sensor.temperature_terrarium.state }} C / {{ states.sensor.humidity_terrarium.state }} %"
 
 - id: bedroomMotion
   alias: 'Motion in bedroom'
@@ -231,6 +253,43 @@
     to: 'off'
   action:
     service: shell_command.kitchen_off
+
+- id: xmasOn
+  alias: 'XMas Light On'
+  hide_entity: true
+  trigger:
+    platform: state
+    entity_id: input_boolean.xmas_light
+    to: 'on'
+  action:
+    service: shell_command.xmas_on
+
+- id: xmasAutoOn
+  alias: 'XMas Light AutoOn'
+  trigger:
+    platform: sun
+    event: sunset
+    offset: 02:00
+  action:
+    service: shell_command.xmas_on
+
+- id: xmasOff
+  alias: 'XMas Light Off'
+  hide_entity: true
+  trigger:
+    platform: state
+    entity_id: input_boolean.xmas_light
+    to: 'off'
+  action:
+    service: shell_command.xmas_off
+
+- id: xmasAutoOff
+  alias: 'XMas Light AutoOff'
+  trigger:
+    platform: time
+    at: '21:00:00'
+  action:
+    service: shell_command.xmas_off
 
 #automation movie:
 #  alias: Movie
